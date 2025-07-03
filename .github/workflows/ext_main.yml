@@ -1,0 +1,119 @@
+name: Get from url
+env:
+  REPO_NAME: ${{ github.event.repository.name }}
+on:
+  workflow_dispatch:
+    inputs:
+      dl_url:
+        required: true
+      mask_log:
+        description: ''
+        required: true
+        default: 'true'
+        type: boolean
+permissions:
+  contents: write
+jobs:
+  push-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mask API Key
+        run: |
+          echo "::add-mask::${{ secrets.TB_API_KEY }}"
+      - name: Mask log
+        if: ${{ github.event.inputs.mask_log == 'true' }}
+        run: |
+          echo "::addamask::a"
+          echo "::add-mask::b"
+          echo "::add-mask::c"
+          echo "::add-mask::d"
+          echo "::add-mask::e"
+          echo "::add-mask::f"
+          echo "::add-mask::g"
+          echo "::add-mask::h"
+          echo "::add-mask::i"
+          echo "::add-mask::j"
+          echo "::add-mask::k"
+          echo "::add-mask::l"
+          echo "::add-mask::m"
+          echo "::add-mask::n"
+          echo "::add-mask::o"
+          echo "::add-mask::p"
+          echo "::add-mask::q"
+          echo "::add-mask::r"
+          echo "::add-mask::s"
+          echo "::add-mask::t"
+          echo "::add-mask::u"
+          echo "::add-mask::v"
+          echo "::add-mask::w"
+          echo "::add-mask::x"
+          echo "::add-mask::y"
+          echo "::add-mask::z"
+          echo "::add-mask::1"
+          echo "::add-mask::2"
+          echo "::add-mask::3"
+          echo "::add-mask::4"
+          echo "::add-mask::5"
+          echo "::add-mask::6"
+          echo "::add-mask::7"
+          echo "::add-mask::8"
+          echo "::add-mask::9"
+          echo "::add-mask::0"
+      - name: Masking inputs
+        run: |
+          DOWNLOAD_URL=$(cat $GITHUB_EVENT_PATH | jq -r '.inputs.dl_url' )
+          echo "::add-mask::$DOWNLOAD_URL"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup
+        if: ${{ !github.event.repository.is_template }}
+        run: |
+          sudo apt update
+          sudo apt install ffmpeg aria2 -y
+      - name: Make changes and push
+        if: ${{ !github.event.repository.is_template }}
+        run: |
+          rm -rf index.m3u8
+          rm -rf *.ts
+          rm -rf *.html
+          aria2c -x 16 "${{ github.event.inputs.dl_url }}" -o video
+          ffmpeg -i video -map 0 -map -0:s -c copy -start_number 0 -hls_time 6 -hls_list_size 0 -f hls index.m3u8
+          rm -rf video
+          git config --global core.compression 1
+          git config --global http.postBuffer 524288000
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index20* 2>/dev/null; git commit -m a; git push
+          git add index19* 2>/dev/null; git commit -m a; git push
+          git add index18* 2>/dev/null; git commit -m a; git push
+          git add index17* 2>/dev/null; git commit -m a; git push
+          git add index16* 2>/dev/null; git commit -m a; git push
+          git add index15* 2>/dev/null; git commit -m a; git push
+          git add index14* 2>/dev/null; git commit -m a; git push
+          git add index13* 2>/dev/null; git commit -m a; git push
+          git add index12* 2>/dev/null; git commit -m a; git push
+          git add index11* 2>/dev/null; git commit -m a; git push
+          git add index10* 2>/dev/null; git commit -m a; git push
+          git add index9* 2>/dev/null; git commit -m a; git push
+          git add index8* 2>/dev/null; git commit -m a; git push
+          git add index7* 2>/dev/null; git commit -m a; git push
+          git add index6* 2>/dev/null; git commit -m a; git push
+          git add index5* 2>/dev/null; git commit -m a; git push
+          git add index4* 2>/dev/null; git commit -m a; git push
+          git add index3* 2>/dev/null; git commit -m a; git push
+          git add index2* 2>/dev/null; git commit -m a; git push
+          git add index1* 2>/dev/null; git commit -m a; git push
+          git add index0* 2>/dev/null; git commit -m a; git push
+          git add . 2>/dev/null; git commit -m a; git push -f
+          # git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch .github/workflows/main.yml' --prune-empty --tag-name-filter cat -- --all
+          # git push origin --force
+          curl -L \
+          -X PUT \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.PAT }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/gconsole00/${{github.event.repository.name}}/actions/permissions \
+          -d '{"enabled":false}'
+          
